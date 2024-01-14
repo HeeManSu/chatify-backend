@@ -9,7 +9,7 @@ const router = express.Router();
 
 
 router.route("/personchat").post(isAuthenticated, createPersonChat);
-router.route("/personchat").get(isAuthenticated, fetchAllChats);
+router.route("/").get(isAuthenticated, fetchAllChats);
 
 
 // Group Chats
