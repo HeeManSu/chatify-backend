@@ -1,5 +1,5 @@
 import { catchAsyncError } from "../middlewares/catchAsyncError.js"
-import errorHandlerClass from "../utils/errorClass.js"
+import ApiError from "../utils/ApiError.js"
 import userModel from "../models/userModel.js"
 import { sendToken } from "../utils/sendToken.js";
 import cloudinary from "cloudinary"
@@ -12,16 +12,16 @@ export const register = catchAsyncError(async (req, res, next) => {
     const file = req.file;
 
     if (!name || !email || !password || !file || !username) {
-        return next(new errorHandlerClass("Please enter all field", 400))
+        return next(new ApiError("Please enter all field", 400))
     }
 
     let user = await userModel.findOne({ $or: [{ email }, { username }] });
 
     if (user) {
         if (user.email === email) {
-            return next(new errorHandlerClass("User with this email already exists", 401))
+            return next(new ApiError("User with this email already exists", 401))
         } if (user.username === username) {
-            return next(new errorHandlerClass("User with this username already exists", 401))
+            return next(new ApiError("User with this username already exists", 401))
 
         }
     }
@@ -52,19 +52,19 @@ export const login = catchAsyncError(async (req, res, next) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-        return next(new errorHandlerClass("Please enter all field", 400))
+        return next(new ApiError("Please enter all field", 400))
     }
     // console.log(email, password)
     let user = await userModel.findOne({ username }).select("+password");
 
     if (!user) {
-        return next(new errorHandlerClass("Incorrect username or password", 401));
+        return next(new ApiError("Incorrect username or password", 401));
     }
 
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
-        return next(new errorHandlerClass("Incorrect email or password", 401))
+        return next(new ApiError("Incorrect email or password", 401))
     }
 
 
