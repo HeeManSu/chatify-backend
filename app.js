@@ -3,7 +3,7 @@ import { config } from "dotenv"
 import cookieParser from "cookie-parser"
 import errorHandlerMiddleware from "./middlewares/errorHandler.js"
 import cors from "cors"
-import user from "./routes/userRoutes.js"
+import routes from "./routes/index.js"
 
 
 config({
@@ -29,7 +29,7 @@ app.use(cors({
 
 
 
-app.use("/api/v1", user);
+routes(app);
 export default app;
 
 
