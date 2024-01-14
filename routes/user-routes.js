@@ -4,20 +4,20 @@ import singleUpload from '../middlewares/multer.js';
 // import { isAuthenticated } from "../middlewares/auth.js";
 import { login, logout, register} from "../controllers/userController.js";
 
-const router = express.Router();
+const userRouter = express.Router();
 
 //To register a user
-router.route("/register").post(singleUpload, register).get((req, res) => {
+userRouter.route("/register").post(singleUpload, register).get((req, res) => {
     res.send("This is my register page")
 })
 
 //To login a user
-router.route("/login").post(login).get((req, res) => {
+userRouter.route("/login").post(login).get((req, res) => {
     res.send("This request is for login")
 })
 
 //logout
-router.route("/logout").get(logout)
+userRouter.route("/logout").get(logout)
 
 // //forget password
 // router.route("/forgetpassword").post(forgetpassword)
@@ -44,4 +44,4 @@ router.route("/logout").get(logout)
 // })
 
 
-export default router;
+export default userRouter;
