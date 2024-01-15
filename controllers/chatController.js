@@ -8,11 +8,14 @@ import cloudinary from "cloudinary"
 
 export const createPersonChat = catchAsyncError(async (req, res, next) => {
     try {
-        const userId = req.user._id;
+        const targetId = req.body.targetId
 
         let isChat = await chatModel.findOne({
             isGroupChat: false,
-            users: { $all: [{ $elemMatch: { $eq: userId } }, { $elemMatch: { $eq: req.user._id } }] },
+            users: {
+                $size: 2,
+                $all: [targetId, req.body.userId],
+            }
         }).populate({
             path: "users",
             select: "-passsword",
@@ -28,7 +31,7 @@ export const createPersonChat = catchAsyncError(async (req, res, next) => {
             const chatData = {
                 chatName: "Sender",
                 isGroupChat: false,
-                users: [req.user._id, userId],
+                users: [req.user._id, targetId],
             };
 
             const createChat = await chatModel.create(chatData);
@@ -154,7 +157,7 @@ export const renameGroup = catchAsyncError(async (req, res, next) => {
 
         const updatedChatName = await chatModel.findByIdAndUpdate(
             chatId,
-            { chatName: newChatName }, 
+            { chatName: newChatName },
             { new: true }
         )
             .populate("users", "-password")

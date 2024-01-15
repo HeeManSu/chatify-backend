@@ -85,6 +85,40 @@ export const logout = catchAsyncError(async (req, res, next) => {
 })
 
 
+export const searchUsers = catchAsyncError(async (req, res, next) => {
+    const search = req.query.search;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const keyword = search ? {
+        $or: [
+            { username: { $regex: search, $options: "i" } },
+            { email: { $regex: search, $options: "i" } },
+        ]
+    } : {};
+
+    const whereQuery = {
+        $and: [
+            keyword,
+            // { _id: { $ne: req.user._id } }
+        ],
+    };
+
+    const users = await userModel.find(whereQuery).skip(skip).limit(limit);
+    const totalUsers = await userModel.countDocuments(whereQuery);
+    res.status(200).json({
+        success: true,
+        users,
+        meta: {
+            page,
+            limit,
+            search,
+            total: totalUsers,
+        }
+    })
+})
+
 // export const forgetpassword = catchAsyncError(async (req, res, next) => {
 
 //     const { email } = req.body;
