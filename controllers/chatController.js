@@ -96,7 +96,7 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
             chats: populatedChats.map(chat => {
                 return {
                     ...chat._doc,
-                    user: chat.isGroupChat ? null : chat.users.find(user => user._id.toString() !== userId),
+                    user: chat.isGroupChat ? null : chat.users.find(user => user._id.toString() !== userId.toString()),
                 }
             }),
         });
