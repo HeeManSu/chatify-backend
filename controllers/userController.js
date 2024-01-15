@@ -54,7 +54,6 @@ export const login = catchAsyncError(async (req, res, next) => {
     if (!username || !password) {
         return next(new ApiError("Please enter all field", 400))
     }
-    // console.log(email, password)
     let user = await userModel.findOne({ username }).select("+password");
 
     if (!user) {
