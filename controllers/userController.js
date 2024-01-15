@@ -91,6 +91,7 @@ export const searchUsers = catchAsyncError(async (req, res, next) => {
     const limit = Number(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    const loggedInUserId = req.user?._id;
     const keyword = search ? {
         $or: [
             { username: { $regex: search, $options: "i" } },
@@ -101,6 +102,7 @@ export const searchUsers = catchAsyncError(async (req, res, next) => {
     const whereQuery = {
         $and: [
             keyword,
+            loggedInUserId ? { _id: { $ne: loggedInUserId } } : {}
             // { _id: { $ne: req.user._id } }
         ],
     };

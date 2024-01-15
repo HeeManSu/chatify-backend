@@ -82,6 +82,7 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
                     select: "name avatar email username",
                 },
             })
+
             .sort({ updatedAt: -1 });
 
         const populatedChats = await userModel.populate(chats, {
@@ -92,7 +93,12 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "Chats retrieved successfully",
-            chats: populatedChats,
+            chats: populatedChats.map(chat => {
+                return {
+                    ...chat._doc,
+                    user: chat.isGroupChat ? null : chat.users.find(user => user._id.toString() !== userId),
+                }
+            }),
         });
 
 
@@ -106,14 +112,14 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
 
 export const createGroupChat = catchAsyncError(async (req, res, next) => {
     try {
-        const { name, users } = req.body;
+        const { name, userIds } = req.body;
         const file = req.file;
 
-        if (!name || !users || !file) {
+        if (!name || !userIds || !file) {
             return next(new errorHandlerClass("Please Enter all Fields", 400));
         }
 
-        const parsedUsers = users
+        const parsedUsers = userIds
 
         if (parsedUsers.length < 2) {
             return next(new errorHandlerClass("Add more than 2 users", 400));

@@ -3,6 +3,7 @@ import express from "express"
 import singleUpload from '../middlewares/multer.js';
 // import { isAuthenticated } from "../middlewares/auth.js";
 import { login, logout, register, searchUsers } from "../controllers/userController.js";
+import { optionalAuthenticated } from "../middlewares/auth.js";
 
 const userRouter = express.Router();
 
@@ -19,7 +20,7 @@ userRouter.route("/login").post(login).get((req, res) => {
 //logout
 userRouter.route("/logout").get(logout)
 
-userRouter.route("/users/search").get(searchUsers)
+userRouter.route("/users/search").get(optionalAuthenticated, searchUsers)
 
 // //forget password
 // router.route("/forgetpassword").post(forgetpassword)
