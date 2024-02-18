@@ -8,14 +8,16 @@ import cloudinary from "cloudinary"
 
 export const createPersonChat = catchAsyncError(async (req, res, next) => {
     try {
-        const targetId = req.body.targetId
-
+        const userId = req.user._id;
         let isChat = await chatModel.findOne({
             isGroupChat: false,
             users: {
-                $size: 2,
-                $all: [targetId, req.body.userId],
-            }
+                $all: [{
+                    $elemMatch: { $eq: userId }
+                }, {
+                    $elemMatch: { $eq: req.user._id }
+                }]
+            },
         }).populate({
             path: "users",
             select: "-passsword",
@@ -31,7 +33,7 @@ export const createPersonChat = catchAsyncError(async (req, res, next) => {
             const chatData = {
                 chatName: "Sender",
                 isGroupChat: false,
-                users: [req.user._id, targetId],
+                users: [req.user._id, userId],
             };
 
             const createChat = await chatModel.create(chatData);
@@ -93,12 +95,7 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
         res.status(200).json({
             success: true,
             message: "Chats retrieved successfully",
-            chats: populatedChats.map(chat => {
-                return {
-                    ...chat._doc,
-                    user: chat.isGroupChat ? null : chat.users.find(user => user._id.toString() !== userId.toString()),
-                }
-            }),
+            chats: populatedChats,
         });
 
 
@@ -112,14 +109,14 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
 
 export const createGroupChat = catchAsyncError(async (req, res, next) => {
     try {
-        const { name, userIds } = req.body;
+        const { name, users } = req.body;
         const file = req.file;
 
-        if (!name || !userIds || !file) {
+        if (!name || !users || !file) {
             return next(new errorHandlerClass("Please Enter all Fields", 400));
         }
 
-        const parsedUsers = userIds
+        const parsedUsers = users
 
         if (parsedUsers.length < 2) {
             return next(new errorHandlerClass("Add more than 2 users", 400));

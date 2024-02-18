@@ -1,4 +1,4 @@
-import userRouter from "./user-routes.js";
+import userRouter from "./userRoutes.js";
 import chatRouter from "./chatRoutes.js"
 
 function routes(app) {

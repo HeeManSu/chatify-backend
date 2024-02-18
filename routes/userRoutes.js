@@ -2,8 +2,7 @@ import express from "express"
 // import { changepassword, forgetpassword, getMyProfile, login, logout, register, resetpassword, searchUser, updateProfile, updateprofilepicture } from "../controllers/userController.js";
 import singleUpload from '../middlewares/multer.js';
 // import { isAuthenticated } from "../middlewares/auth.js";
-import { login, logout, register } from "../controllers/userController.js";
-// import { optionalAuthenticated } from "../middlewares/auth.js";
+import { login, logout, register} from "../controllers/userController.js";
 
 const userRouter = express.Router();
 
@@ -19,8 +18,6 @@ userRouter.route("/login").post(login).get((req, res) => {
 
 //logout
 userRouter.route("/logout").get(logout)
-
-// userRouter.route("/users/search").get(optionalAuthenticated, searchUsers)
 
 // //forget password
 // router.route("/forgetpassword").post(forgetpassword)

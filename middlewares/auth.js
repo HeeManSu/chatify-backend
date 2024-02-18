@@ -16,10 +16,10 @@ export const isAuthenticated = catchAsyncError(async (req, res, next) => {
     next();
 })
 
-export const optionalAuthenticated = catchAsyncError(async (req, res, next) => {
-    const { token } = req.cookies;
-    if (!token) return next();
-    const decoded = Jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await userModel.findById(decoded._id);
-    next();
-})
+// export const optionalAuthenticated = catchAsyncError(async (req, res, next) => {
+//     const { token } = req.cookies;
+//     if (!token) return next();
+//     const decoded = Jwt.verify(token, process.env.JWT_SECRET);
+//     req.user = await userModel.findById(decoded._id);
+//     next();
+// })
