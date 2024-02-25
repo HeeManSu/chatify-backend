@@ -105,8 +105,6 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
 })
 
 
-
-
 export const createGroupChat = catchAsyncError(async (req, res, next) => {
     try {
         const { name, users } = req.body;

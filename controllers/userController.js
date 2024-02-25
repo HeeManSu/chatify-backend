@@ -83,6 +83,35 @@ export const logout = catchAsyncError(async (req, res, next) => {
     })
 })
 
+export const searchUser = catchAsyncError(async (req, res, next) => {
+    const { search } = req.query;
+    let filter = {};
+
+    // If search query is provided, construct the keyword filter
+    if (search) {
+        filter.username = { $regex: search, $options: "i" };
+    }
+
+    // Exclude the current user from search results
+    filter._id = { $ne: req.user._id };
+
+    // Find users based on the constructed filter
+    const users = await userModel.find(filter);
+
+    res.status(200).json({
+        success: true,
+        users,
+    });
+});
+
+
+export const getMyProfile = catchAsyncError(async (req, res) => {
+    const user = await userModel.findById(req.user._id);
+    res.status(200).json({
+        success: true,
+        user,
+    })
+})
 
 // export const searchUsers = catchAsyncError(async (req, res, next) => {
 //     const search = req.query.search;

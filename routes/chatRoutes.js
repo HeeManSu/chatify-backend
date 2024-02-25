@@ -8,7 +8,10 @@ import singleUpload from "../middlewares/multer.js";
 const router = express.Router();
 
 
-router.route("/personchat").post(isAuthenticated, createPersonChat);
+router.route("/personchat").post(isAuthenticated, createPersonChat).get((req, res) => {
+    res.send("This is my register page")
+});
+
 router.route("/").get(isAuthenticated, fetchAllChats);
 
 

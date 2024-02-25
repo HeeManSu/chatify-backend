@@ -1,8 +1,8 @@
 import express from "express"
 // import { changepassword, forgetpassword, getMyProfile, login, logout, register, resetpassword, searchUser, updateProfile, updateprofilepicture } from "../controllers/userController.js";
 import singleUpload from '../middlewares/multer.js';
-// import { isAuthenticated } from "../middlewares/auth.js";
-import { login, logout, register} from "../controllers/userController.js";
+import { isAuthenticated } from "../middlewares/auth.js";
+import { getMyProfile, login, logout, register, searchUser} from "../controllers/userController.js";
 
 const userRouter = express.Router();
 
@@ -15,6 +15,14 @@ userRouter.route("/register").post(singleUpload, register).get((req, res) => {
 userRouter.route("/login").post(login).get((req, res) => {
     res.send("This request is for login")
 })
+
+// To search user for creating chat
+userRouter.route("/searchuser").get(isAuthenticated, searchUser).get((req, res) => {
+    res.send("This is my register page")
+})
+
+//Get my profile
+userRouter.route("/me").get(isAuthenticated, getMyProfile)
 
 //logout
 userRouter.route("/logout").get(logout)
