@@ -8,32 +8,44 @@ import cloudinary from "cloudinary"
 
 export const createPersonChat = catchAsyncError(async (req, res, next) => {
     try {
-        const userId = req.user._id;
+
+        const { secondUserName } = req.body;
+        const loggedInUserName = req.user.username;
+
+        console.log("userId", req.user._id)
+
+        if (!secondUserName || !loggedInUserName) {
+            return next(new errorHandlerClass("Please enter all fields", 400));
+        }
+
+        const secondUser = await userModel.findOne({ username: secondUserName });
+
+        console.log(secondUser);
+
         let isChat = await chatModel.findOne({
             isGroupChat: false,
             users: {
                 $all: [{
-                    $elemMatch: { $eq: userId }
+                    $elemMatch: { $eq: secondUser._id }
                 }, {
                     $elemMatch: { $eq: req.user._id }
                 }]
             },
-        }).populate({
-            path: "users",
-            select: "-passsword",
-        }).populate({
-            path: "latestMessage",
-            populate: {
-                path: "sender",
+        })
+            .populate({
+                path: "users",
+                select: "-password"
+            })
+            .populate({
+                path: 'latestMessage',
                 select: "name avatar email username"
-            },
-        });
+            });
 
         if (!isChat) {
             const chatData = {
                 chatName: "Sender",
                 isGroupChat: false,
-                users: [req.user._id, userId],
+                users: [req.user._id, secondUser._id],
             };
 
             const createChat = await chatModel.create(chatData);
@@ -52,13 +64,12 @@ export const createPersonChat = catchAsyncError(async (req, res, next) => {
         } else {
             res.status(200).json({
                 success: true,
-                message: 'Chat found',
+                message: 'Chat already exist',
                 chat: isChat,
-            });
+            })
         }
     } catch (error) {
-        // next(new errorHandlerClass("Unable to create chat", 400));
-        throw new Error(error);
+        next(new errorHandlerClass("Unable to create chat", 400));
     }
 })
 
