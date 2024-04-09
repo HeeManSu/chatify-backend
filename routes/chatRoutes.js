@@ -3,10 +3,7 @@ import { isAuthenticated } from './../middlewares/auth.js';
 import { addToGroup, createGroupChat, createPersonChat, fetchAllChats, removefromGroup, renameGroup } from "../controllers/chatController.js";
 import singleUpload from "../middlewares/multer.js";
 
-
-
 const router = express.Router();
-
 
 router.route("/personchat").post(isAuthenticated, createPersonChat).get((req, res) => {
     res.send("This is my register page")

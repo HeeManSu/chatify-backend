@@ -12,16 +12,11 @@ export const createPersonChat = catchAsyncError(async (req, res, next) => {
         const { secondUserName } = req.body;
         const loggedInUserName = req.user.username;
 
-        console.log("userId", req.user._id)
-
         if (!secondUserName || !loggedInUserName) {
             return next(new errorHandlerClass("Please enter all fields", 400));
         }
 
         const secondUser = await userModel.findOne({ username: secondUserName });
-
-        console.log(secondUser);
-
         let isChat = await chatModel.findOne({
             isGroupChat: false,
             users: {
@@ -43,7 +38,7 @@ export const createPersonChat = catchAsyncError(async (req, res, next) => {
 
         if (!isChat) {
             const chatData = {
-                chatName: "Sender",
+                chatName: secondUserName,
                 isGroupChat: false,
                 users: [req.user._id, secondUser._id],
             };
