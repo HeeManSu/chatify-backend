@@ -120,7 +120,7 @@ export const createGroupChat = catchAsyncError(async (req, res, next) => {
             return next(new errorHandlerClass("Please Enter all Fields", 400));
         }
 
-        const parsedUsers = users
+        const parsedUsers = JSON.parse(users);
 
         if (parsedUsers.length < 2) {
             return next(new errorHandlerClass("Add more than 2 users", 400));
@@ -153,7 +153,10 @@ export const createGroupChat = catchAsyncError(async (req, res, next) => {
             newChat: fullGroupChat
         });
     } catch (error) {
-        throw new Error(error);
+        res.status(500).json({
+            success: false,
+            message: error.message || "Internal Server Error"
+        });
     }
 });
 
