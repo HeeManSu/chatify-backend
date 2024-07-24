@@ -68,8 +68,6 @@ export const createPersonChat = catchAsyncError(async (req, res, next) => {
     }
 })
 
-
-
 export const fetchAllChats = catchAsyncError(async (req, res, next) => {
     try {
         const userId = req.user._id;
@@ -90,7 +88,6 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
                     select: "name avatar email username",
                 },
             })
-
             .sort({ updatedAt: -1 });
 
         const populatedChats = await userModel.populate(chats, {
@@ -103,12 +100,30 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
             message: "Chats retrieved successfully",
             chats: populatedChats,
         });
-
-
     } catch (error) {
         throw new Error(error);
     }
-})
+});
+
+export const deletePersonChat = catchAsyncError(async (req, res, next) => {
+    try {
+        const { chatId } = req.params;
+
+        const chat = await chatModel.findById(chatId);
+        if (!chat) {
+            return next(new errorHandlerClass("Chat does not exist", 400));
+        }
+
+        await chatModel.findByIdAndDelete(chatId);
+
+        res.status(200).json({
+            success: true,
+            message: "Chat deleted successfully",
+        });
+    } catch (error) {
+        next(new errorHandlerClass("Failed to delete chat", 400));
+    }
+});
 
 
 export const createGroupChat = catchAsyncError(async (req, res, next) => {
