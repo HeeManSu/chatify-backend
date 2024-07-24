@@ -14,7 +14,7 @@ const chatSchema = new Schema({
         type: Boolean,
         default: false,
     },
-    latestMessage: {  // Corrected field name
+    latestMessage: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Message",
     },

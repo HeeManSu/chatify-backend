@@ -90,15 +90,10 @@ export const fetchAllChats = catchAsyncError(async (req, res, next) => {
             })
             .sort({ updatedAt: -1 });
 
-        const populatedChats = await userModel.populate(chats, {
-            path: "latestMessage.sender",
-            select: "name avatar email username",
-        });
-
         res.status(200).json({
             success: true,
             message: "Chats retrieved successfully",
-            chats: populatedChats,
+            chats: chats,
         });
     } catch (error) {
         throw new Error(error);
